@@ -4,20 +4,29 @@
   <script type="text/javascript" src="lib/scene.js"/></script>
   <script type="text/javascript" src="lib/image_loader.js"/></script>
   <script type="text/javascript" src="lib/game.js"/></script>
+  <script type="text/javascript" src="lib/game_object.js"/></script>
   <script>
     window.addEventListener('load', function() {
       var canvas = document.getElementById("canvas");
       var manifest = {
         "images": {
-          "bg": "img/bg.png"
+          "bg": "img/bg.png",
+          "play_btn": "img/play_btn.png"
         }
       };
       // Create our game
       var game = new Game(canvas, manifest);
       game.scenes.add("menu", new Scene(canvas, function() {
-      },function(context) {
+        var context = this.context;
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(game.images.get("bg"), 0, 0);
+        // Add menu buttons
+        var playBtn = new GameObject(430, 230, 280, 100, game.images.get("play_btn"));
+        this.addGameObject("play_btn", playBtn);
+        playBtn.setOnClickListener(function(event) {
+          console.log("Play button clicked")
+        })
+      },function(context) {
       }));
     }, true);
   </script>
