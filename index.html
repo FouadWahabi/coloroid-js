@@ -4,8 +4,35 @@
   <script type="text/javascript" src="lib/scene.js"/></script>
   <script type="text/javascript" src="lib/image_loader.js"/></script>
   <script type="text/javascript" src="lib/game.js"/></script>
+  <script type="text/javascript" src="lib/sprite.js"/></script>
   <script type="text/javascript" src="lib/game_object.js"/></script>
   <script>
+    function setupBoard(canvas, scene, size) {
+      var board = []
+      var rectWidth = canvas.width / size;
+      var rectHeigth = (canvas.height * 2 / 3 ) / size;
+      var colors = ["blue", "red", "green", "black", "pink", "cyan"];
+      for(var i = 0 ; i < size ; i ++) {
+          for(var j = 0 ; j < size ; j ++) {
+            var random = Math.floor(Math.random() * 6);
+            var rect = new GameObject(i * rectWidth, j * rectHeigth, rectWidth, rectHeigth, new Sprite(colors[random], "white"));
+            scene.addGameObject("rect" + (i * size  + j), rect);
+          }
+      }
+      // Draw the menu
+      rectWidth = canvas.width / 3;
+      rectHeigth = (canvas.height * 1 / 3 ) / 2;
+      var colors = ["blue", "red", "green", "black", "pink", "cyan"];
+      for(var i = 0 ; i < 3 ; i ++) {
+          for(var j = 0 ; j < 2 ; j ++) {
+            var rect = new GameObject(i * rectWidth + rectWidth / 4 ,j * rectHeigth + rectHeigth / 4 + (canvas.height * 2 / 3 ), rectWidth / 2, rectHeigth / 2, new Sprite(colors[i * 2 + j], "white"));
+            scene.addGameObject("menuRect" + (i * 4  + j), rect);
+            rect.setOnClickListener(function(event, obj, obj_name) {
+              console.log(obj_name)
+            })
+          }
+      }
+    }
     window.addEventListener('load', function() {
       var canvas = document.getElementById("canvas");
       var manifest = {
@@ -24,9 +51,23 @@
         var playBtn = new GameObject(430, 230, 280, 100, game.images.get("play_btn"));
         this.addGameObject("play_btn", playBtn);
         playBtn.setOnClickListener(function(event) {
-          console.log("Play button clicked")
+          game.scenes.switchTo("game");
         })
       },function(context) {
+      }));
+      game.scenes.add("game", new Scene(canvas, function() {
+        var scene = this;
+        var context = this.context;
+        // draw black background
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.beginPath();
+        context.rect(0,0,canvas.width, canvas.height);
+        context.fillStyle = "black";
+        context.fill();
+        var board = setupBoard(canvas, scene, 4);
+
+      }, function() {
+
       }));
     }, true);
   </script>
